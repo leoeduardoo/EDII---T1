@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "main:main.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "&amp;quant_Registros">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "leEntrada:main.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "cadastro[1]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "insere:main.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "&amp;cadastro[i].tamanho">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>
