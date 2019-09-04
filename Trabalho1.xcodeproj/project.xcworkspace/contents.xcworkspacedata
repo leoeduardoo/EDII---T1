@@ -2,6 +2,15 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:Trabalho1.xcodeproj">
+      location = "group:../Trabalho1/header.c">
+   </FileRef>
+   <FileRef
+      location = "group:/Users/leo/Desktop/Faculdade/ED2 - 2019/EDII-T1/Trabalho1/header.h">
+   </FileRef>
+   <FileRef
+      location = "group:../README.md">
+   </FileRef>
+   <FileRef
+      location = "self:">
    </FileRef>
 </Workspace>
