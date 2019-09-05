@@ -21,6 +21,13 @@
 #define TAM_TIPO_SEGURO 30
 #define CHAR_DIVISOR '#'
 
+//lista de espacos disponiveis
+struct lista_espacos {
+    int tamanho;
+    int offset;
+    struct lista_espacos *prox;
+};
+
 //struct para armazenar as inforções lidas do arquivo
 struct cadastro {
     char cod_segurado[3];
@@ -34,7 +41,7 @@ struct cadastro {
 void dump (void);
 
 //insere registros no arquivo de saida
-void insere(struct cadastro cadastro[]);
+void insere(struct cadastro cadastro[], struct lista_espacos* lista);
 
 //função para ler o arquivo de entrada e passar os registros para memória (struct)
 void leEntrada(FILE* arquivo, struct cadastro cadastro[]);

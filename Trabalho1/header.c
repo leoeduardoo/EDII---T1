@@ -49,48 +49,33 @@ void abreArquivo (FILE** arquivo, char *flag, char *nome_arquivo){
 //faz o dump do arquivo
 void dump (){
     
-    FILE *arquivo;
+    FILE *saida;
     
-    if ((arquivo = fopen("/Users/leo/Desktop/Faculdade/ED2 - 2019/EDII-T1/Trabalho1/saida.bin", "r+")) == NULL)
-    {
-        printf("Nao foi possivel abrir o arquivo.\n");
-    }
-    
-    //rewind(arquivo);
+    abreArquivo(&saida, "r+", "saida.bin");
     
     char value;
     
-    while (!feof(arquivo)){
-        value = fgetc(arquivo);
+    while (!feof(saida)){
+        value = fgetc(saida);
         
         if (isprint(value)){
             //%x imprime em hexadecimal
             printf("%x ", value);
         }
     }
+    
+    fclose(saida);
+    
 }
 
 //insere registros no arquivo de saida
-void insere(struct cadastro cadastro[]){
+void insere(struct cadastro cadastro[], struct lista_espacos* lista){
     
     FILE *inserido;
     FILE *saida;
     abreArquivo(&inserido, "r+", "inserido.bin");
     abreArquivo(&saida, "r+", "saida.bin");
     
-    /*
-     if ((inserido = fopen("/Users/leo/Desktop/Faculdade/ED2 - 2019/EDII-T1/Trabalho1/inserido.bin", "r+")) == NULL)
-     {
-     printf("Nao foi possivel abrir o arquivo.\n");
-     }
-     */
-    /*
-     
-     if ((saida = fopen("/Users/leo/Desktop/Faculdade/ED2 - 2019/EDII-T1/Trabalho1/saida.bin", "r+")) == NULL)
-     {
-     printf("Nao foi possivel abrir o arquivo.\n");
-     }
-     */
     //contador das posições da struct cadastro
     int i = 0;
     
@@ -107,6 +92,167 @@ void insere(struct cadastro cadastro[]){
         }
     }
     
+    
+    
+    /////////////////////////////////////////////////////////
+    
+    int j = 0;
+    int k = 0;
+    int quant_seek = 0;
+    
+    struct lista_espacos* atual = lista;
+    
+    //caso a lista esteja vazia não houve remoção e a inclusão deve ser feita no fim do arquivo
+    if (atual->prox == NULL){
+        
+        while(k < i){
+            quant_seek += cadastro[k].tamanho;
+            k++;
+        }
+        
+        //escreve em inserido.bin o cod_segurado para evitar que haja duplicidade posteriormente
+        fwrite(cadastro[i].cod_segurado, sizeof(cadastro[i].cod_segurado), 1, inserido);
+        
+        //garante que saida.bin esteja na posição correta e não sobrescreva outros registros
+        fseek(saida, quant_seek, 1);
+        
+        //escreve em saida.bin os dados
+        fprintf(saida, "%d", cadastro[i].tamanho);
+        
+        fwrite(cadastro[i].cod_segurado, sizeof(cadastro[i].cod_segurado), 1, saida);
+        fputc(CHAR_DIVISOR, saida);
+        
+        //int j = 0;
+        
+        while(cadastro[i].nome_segurado[j] != '\0'){
+            fputc(cadastro[i].nome_segurado[j], saida);
+            j++;
+        }
+        
+        fputc(CHAR_DIVISOR, saida);
+        
+        j = 0;
+        
+        while(cadastro[i].seguradora[j] != '\0'){
+            fputc(cadastro[i].seguradora[j], saida);
+            j++;
+        }
+        
+        fputc(CHAR_DIVISOR, saida);
+        
+        j = 0;
+        
+        while(cadastro[i].tipo_seguro[j] != '\0'){
+            fputc(cadastro[i].tipo_seguro[j], saida);
+            j++;
+        }
+    }
+    else{
+        while(atual->prox != NULL){
+            
+            //verifica se o penúltimo nó disponível é suficiente
+            if(atual->tamanho >= cadastro[i].tamanho){
+                
+                //escreve em inserido.bin o cod_segurado para evitar que haja duplicidade posteriormente
+                fwrite(cadastro[i].cod_segurado, sizeof(cadastro[i].cod_segurado), 1, inserido);
+                
+                //garante que saida.bin esteja na posição correta e não sobrescreva outros registros
+                fseek(saida, atual->offset, 1);
+                
+                //escreve em saida.bin os dados
+                fprintf(saida, "%d", cadastro[i].tamanho);
+                
+                fwrite(cadastro[i].cod_segurado, sizeof(cadastro[i].cod_segurado), 1, saida);
+                fputc(CHAR_DIVISOR, saida);
+                
+                //int j = 0;
+                
+                while(cadastro[i].nome_segurado[j] != '\0'){
+                    fputc(cadastro[i].nome_segurado[j], saida);
+                    j++;
+                }
+                
+                fputc(CHAR_DIVISOR, saida);
+                
+                j = 0;
+                
+                while(cadastro[i].seguradora[j] != '\0'){
+                    fputc(cadastro[i].seguradora[j], saida);
+                    j++;
+                }
+                
+                fputc(CHAR_DIVISOR, saida);
+                
+                j = 0;
+                
+                while(cadastro[i].tipo_seguro[j] != '\0'){
+                    fputc(cadastro[i].tipo_seguro[j], saida);
+                    j++;
+                }
+            }
+            atual = atual->prox;
+        }
+    }
+    
+    //verifica se o último nó disponível é suficiente
+    if(atual->tamanho >= cadastro[i].tamanho){
+        
+        //escreve em inserido.bin o cod_segurado para evitar que haja duplicidade posteriormente
+        fwrite(cadastro[i].cod_segurado, sizeof(cadastro[i].cod_segurado), 1, inserido);
+        
+        //garante que saida.bin esteja na posição correta e não sobrescreva outros registros
+        fseek(saida, atual->offset, 1);
+        
+        //escreve em saida.bin os dados
+        fprintf(saida, "%d", cadastro[i].tamanho);
+        
+        fwrite(cadastro[i].cod_segurado, sizeof(cadastro[i].cod_segurado), 1, saida);
+        fputc(CHAR_DIVISOR, saida);
+        
+        //int j = 0;
+        
+        while(cadastro[i].nome_segurado[j] != '\0'){
+            fputc(cadastro[i].nome_segurado[j], saida);
+            j++;
+        }
+        
+        fputc(CHAR_DIVISOR, saida);
+        
+        j = 0;
+        
+        while(cadastro[i].seguradora[j] != '\0'){
+            fputc(cadastro[i].seguradora[j], saida);
+            j++;
+        }
+        
+        fputc(CHAR_DIVISOR, saida);
+        
+        j = 0;
+        
+        while(cadastro[i].tipo_seguro[j] != '\0'){
+            fputc(cadastro[i].tipo_seguro[j], saida);
+            j++;
+        }
+    }
+    
+    /*
+     while(atual->prox != NULL){
+     atual = atual->prox;
+     }
+     
+     atual->prox = malloc(sizeof(struct lista_espacos));
+     atual->prox->tamanho = 0;
+     atual->prox->prox = NULL;
+     */
+    
+    
+    
+    
+    ///////////////////////////////////////////////////////
+    
+    
+    
+    /*
     int k = 0;
     int quant_seek = 0;
     
@@ -115,10 +261,10 @@ void insere(struct cadastro cadastro[]){
         k++;
     }
     
-    //escreve em inserido.bin o cod_segurado ja inserido
+    //escreve em inserido.bin o cod_segurado para evitar que haja duplicidade posteriormente
     fwrite(cadastro[i].cod_segurado, sizeof(cadastro[i].cod_segurado), 1, inserido);
     
-    //garante que saida.bin esteja na posição correta e não sobrescreva nada
+    //garante que saida.bin esteja na posição correta e não sobrescreva outros registros
     fseek(saida, quant_seek, 1);
     
     //escreve em saida.bin os dados
@@ -151,6 +297,7 @@ void insere(struct cadastro cadastro[]){
         fputc(cadastro[i].tipo_seguro[j], saida);
         j++;
     }
+    */
     
     fclose(inserido);
     fclose(saida);
