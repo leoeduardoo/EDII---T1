@@ -8,12 +8,50 @@
 
 #include "header.h"
 
+//conta quantos registros tem no arquivo de entrada para serem inseridos
+int contaRegistrosEntrada(){
+    
+    FILE *entrada;
+    
+    abreArquivo(&entrada, "r", "insere.bin");
+    
+    char registro[TAM_REG_ENTRADA];
+    int quant_registros = 0;
+    
+    //descobre quantos registros têm no arquivo para salvar na struct
+    while (fread(&registro,sizeof(char),TAM_REG_ENTRADA,entrada))
+    {
+        quant_registros++;
+    }
+    
+    fclose(entrada);
+    
+    return quant_registros;
+}
+
+//abre o arquivo com a flag desejada
+void abreArquivo (FILE** arquivo, char *flag, char *nome_arquivo){
+    
+    unsigned long tam = strlen(nome_arquivo) + strlen("/Users/leo/Desktop/Faculdade/ED2 - 2019/EDII-T1/Trabalho1/");
+    
+    char caminho_arquivo[tam];
+    
+    sprintf(caminho_arquivo, "%s%s", "/Users/leo/Desktop/Faculdade/ED2 - 2019/EDII-T1/Trabalho1/", nome_arquivo);
+    
+    if ((*arquivo = fopen(caminho_arquivo, flag)) == NULL)
+    {
+        printf("Nao foi possivel abrir o arquivo.\n");
+        exit(0);
+    }
+    
+}
+
 //faz o dump do arquivo
 void dump (){
     
     FILE *arquivo;
     
-    if ((arquivo = fopen("/Users/leo/Desktop/Faculdade/ED2 - 2019/semana4/Trabalho1/Trabalho1/saida.bin", "r+")) == NULL)
+    if ((arquivo = fopen("/Users/leo/Desktop/Faculdade/ED2 - 2019/EDII-T1/Trabalho1/saida.bin", "r+")) == NULL)
     {
         printf("Nao foi possivel abrir o arquivo.\n");
     }
@@ -36,19 +74,23 @@ void dump (){
 void insere(struct cadastro cadastro[]){
     
     FILE *inserido;
-    
-    if ((inserido = fopen("/Users/leo/Desktop/Faculdade/ED2 - 2019/semana4/Trabalho1/Trabalho1/inserido.bin", "r+")) == NULL)
-    {
-        printf("Nao foi possivel abrir o arquivo.\n");
-    }
-    
     FILE *saida;
+    abreArquivo(&inserido, "r+", "inserido.bin");
+    abreArquivo(&saida, "r+", "saida.bin");
     
-    if ((saida = fopen("/Users/leo/Desktop/Faculdade/ED2 - 2019/semana4/Trabalho1/Trabalho1/saida.bin", "r+")) == NULL)
-    {
-        printf("Nao foi possivel abrir o arquivo.\n");
-    }
-    
+    /*
+     if ((inserido = fopen("/Users/leo/Desktop/Faculdade/ED2 - 2019/EDII-T1/Trabalho1/inserido.bin", "r+")) == NULL)
+     {
+     printf("Nao foi possivel abrir o arquivo.\n");
+     }
+     */
+    /*
+     
+     if ((saida = fopen("/Users/leo/Desktop/Faculdade/ED2 - 2019/EDII-T1/Trabalho1/saida.bin", "r+")) == NULL)
+     {
+     printf("Nao foi possivel abrir o arquivo.\n");
+     }
+     */
     //contador das posições da struct cadastro
     int i = 0;
     

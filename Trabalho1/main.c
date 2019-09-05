@@ -10,46 +10,63 @@
 
 int main(void)
 {
-    
     FILE *entrada;
-    
-    if ((entrada = fopen("/Users/leo/Desktop/Faculdade/ED2 - 2019/semana4/Trabalho1/Trabalho1/insere.bin", "r")) == NULL)
-    {
-        printf("Nao foi possivel abrir o arquivo.\n");
-        return 0;
-    }
-    
     FILE *saida;
     
-    if ((saida = fopen("/Users/leo/Desktop/Faculdade/ED2 - 2019/semana4/Trabalho1/Trabalho1/saida.bin", "r+")) == NULL)
-    {
-        printf("Nao foi possivel abrir o arquivo.\n");
-        return 0;
-    }
-    
-    char registro[TAM_REG_ENTRADA];
-    int quant_registros = 0;
-    
-    //descobre quantos registros têm no arquivo para salvar na struct
-    while (fread(&registro,sizeof(char),TAM_REG_ENTRADA,entrada))
-    {
-        quant_registros++;
-    }
+    abreArquivo(&entrada, "r", "insere.bin");
+    abreArquivo(&saida, "r+", "saida.bin");
     
     //declara struct agora já tem o tamanho
-    struct cadastro cadastro[quant_registros];
+    struct cadastro cadastro[contaRegistrosEntrada()];
     
     //seta todas as posições como '\0'
     memset(&cadastro,(char)'\0',sizeof(cadastro));
     
-    leEntrada(entrada, cadastro);
+    int opcao = 0;
     
-    insere(cadastro);
-    insere(cadastro);
-    insere(cadastro);
-    dump();
+    do {
+        printf("\nCadastro de Seguradora:\n");
+        printf("\n\t1. Insercao");
+        printf("\n\t2. Remocao");
+        printf("\n\t3. Compactacao");
+        printf("\n\t4. Dump Arquivo");
+        printf("\n\t5. Carrega Arquivos");
+        printf("\n\t6. Sair\n");
+        printf("\nDigite uma opcao: ");
+        scanf("%d", &opcao);
+        
+        switch (opcao) {
+            case 1:
+                insere(cadastro);
+                break;
+                
+            case 2:
+                printf("\nRemocao\n");
+                break;
+                
+            case 3:
+                printf("\nCompactacao\n");
+                break;
+                
+            case 4:
+                dump();
+                break;
+                
+            case 5:
+                leEntrada(entrada, cadastro);
+                break;
+                
+            case 6:
+                break;
+                
+            default:
+                printf("\nOpcao invalida.\n");
+        }
+        
+    } while (opcao != 6);
     
     fclose(entrada);
+    fclose(saida);
     
     return 0;
 }

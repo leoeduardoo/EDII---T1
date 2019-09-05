@@ -10,8 +10,10 @@
 #define header_h
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
+#include <stdbool.h>
 #define TAM_REG_ENTRADA 134
 #define TAM_COD_SEGURADO 3
 #define TAM_NOME_SEGURADO 50
@@ -36,5 +38,11 @@ void insere(struct cadastro cadastro[]);
 
 //função para ler o arquivo de entrada e passar os registros para memória (struct)
 void leEntrada(FILE* arquivo, struct cadastro cadastro[]);
+
+//abre o arquivo com a flag desejada
+void abreArquivo (FILE** arquivo, char *flag, char *nome_arquivo);
+
+//conta quantos registros tem no arquivo para serem inseridos
+int contaRegistrosEntrada(void);
 
 #endif /* header_h */
