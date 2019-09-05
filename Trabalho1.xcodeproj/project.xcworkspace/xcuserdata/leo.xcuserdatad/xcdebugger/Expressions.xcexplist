@@ -3,18 +3,18 @@
    version = "1.0">
    <ContextStates>
       <ContextState
-         contextName = "main:main.c">
-         <PersistentStrings>
-            <PersistentString
-               value = "&amp;quant_Registros">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
          contextName = "leEntrada:main.c">
          <PersistentStrings>
             <PersistentString
                value = "cadastro[1]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "main:main.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "&amp;quant_Registros">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
