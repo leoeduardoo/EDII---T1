@@ -5,5 +5,6 @@ Tarefas para o próximo commit:
 - ~~Organização do código.~~
 - ~~Interface de Usuário.~~
 - ~~Verificar como deve ser feito o dump (somente printar na tela como já está).~~
+- Fila de espaços disponíveis (parcialmente concluído).
 - Deletar registro (fragmentação).
 - Compactar.

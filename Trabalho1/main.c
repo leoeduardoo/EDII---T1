@@ -10,13 +10,39 @@
 
 int main(void)
 {
+    //declara a lista de espacos
+    struct lista_espacos lista;
+    
+    lista.tamanho = 0;
+    lista.prox = NULL;
+    
+    lista.prox = malloc(sizeof(struct lista_espacos));
+    lista.prox->tamanho = 15;
+    lista.prox->offset = 63;
+    lista.prox->prox = NULL;
+    
+    lista.prox->prox = malloc(sizeof(struct lista_espacos));
+    lista.prox->prox->tamanho = 34;
+    lista.prox->prox->offset = 29;
+    lista.prox->prox->prox = NULL;
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    ////////////////////////////////////////
+    
     FILE *entrada;
     FILE *saida;
     
     abreArquivo(&entrada, "r", "insere.bin");
     abreArquivo(&saida, "r+", "saida.bin");
     
-    //declara struct agora já tem o tamanho
+    //declara struct agora que já tem o tamanho
     struct cadastro cadastro[contaRegistrosEntrada()];
     
     //seta todas as posições como '\0'
@@ -37,7 +63,7 @@ int main(void)
         
         switch (opcao) {
             case 1:
-                insere(cadastro);
+                insere(cadastro, &lista);
                 break;
                 
             case 2:
