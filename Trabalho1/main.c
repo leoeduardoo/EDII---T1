@@ -12,41 +12,30 @@ int main(void)
 {
     //declara a lista de espacos
     struct lista_espacos lista;
-    
-    lista.tamanho = 0;
+    lista.offset = -1;
     lista.prox = NULL;
-    
-    lista.prox = malloc(sizeof(struct lista_espacos));
-    lista.prox->tamanho = 15;
-    lista.prox->offset = 63;
-    lista.prox->prox = NULL;
-    
-    lista.prox->prox = malloc(sizeof(struct lista_espacos));
-    lista.prox->prox->tamanho = 34;
-    lista.prox->prox->offset = 29;
-    lista.prox->prox->prox = NULL;
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    ////////////////////////////////////////
     
     FILE *entrada;
     FILE *saida;
+    FILE *remove;
     
     abreArquivo(&entrada, "r", "insere.bin");
     abreArquivo(&saida, "r+", "saida.bin");
+    abreArquivo(&remove, "r", "remove.bin");
     
     //declara struct agora que já tem o tamanho
-    struct cadastro cadastro[contaRegistrosEntrada()];
+    int quant_registros_insere = contaRegistrosEntrada();
+    struct cadastro cadastro[quant_registros_insere];
     
     //seta todas as posições como '\0'
     memset(&cadastro,(char)'\0',sizeof(cadastro));
+    
+    //declara struct contendo quais registros serão removidos
+    int quant_registros_remove = contaRegistrosRemover();
+    struct remocao remocao[quant_registros_remove];
+    
+    //seta todas as posições como '\0'
+    memset(&remocao,(char)'\0',sizeof(remocao));
     
     int opcao = 0;
     
@@ -63,11 +52,11 @@ int main(void)
         
         switch (opcao) {
             case 1:
-                insere(cadastro, &lista);
+                insereRegistro(cadastro, &lista);
                 break;
                 
             case 2:
-                printf("\nRemocao\n");
+                removeRegistro(remocao, cadastro, &lista);
                 break;
                 
             case 3:
@@ -79,7 +68,7 @@ int main(void)
                 break;
                 
             case 5:
-                leEntrada(entrada, cadastro);
+                carregaArquivos(entrada, remove, cadastro, remocao, quant_registros_insere, quant_registros_remove);
                 break;
                 
             case 6:
