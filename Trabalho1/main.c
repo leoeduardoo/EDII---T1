@@ -12,6 +12,7 @@ int main(void)
 {
     //declara a lista de espacos
     struct lista_espacos lista;
+   
     lista.offset = -1;
     lista.prox = NULL;
     
@@ -60,7 +61,7 @@ int main(void)
                 break;
                 
             case 3:
-                printf("\nCompactacao\n");
+                compacta(saida);
                 break;
                 
             case 4:

@@ -8,6 +8,73 @@
 
 #include "header.h"
 
+//compacta arquivo
+void compacta(FILE * arquivo){
+    
+    FILE *arquivo_aux;
+    
+    abreArquivo(&arquivo_aux, "w+", "saida_aux.bin");
+    
+    rewind(arquivo);
+    rewind(arquivo_aux);
+    
+    //armazena o caractere lido no arquivo
+    char caractere = '\0';
+    
+    int i = 0;
+    
+    //escreve o cabeçalho
+    for (i = 0; i < 4; i++){
+        caractere = fgetc(arquivo);
+        fputc(caractere, arquivo_aux);
+    }
+    
+    //armazena o tamanho do registro
+    int tam = 0;
+    
+    
+    while (caractere != EOF){
+        
+        fscanf(arquivo, "%2d", &tam);
+        caractere = fgetc(arquivo);
+        if(caractere != EOF){
+            if(caractere == '*'){
+                fseek(arquivo, tam-3, 1);
+            }
+            else{
+                fprintf(arquivo_aux, "%d", tam);
+                
+                i = 0;
+                while(i < tam-3){
+                    fputc(caractere, arquivo_aux);
+                    caractere = fgetc(arquivo);
+                    i++;
+                }
+                fputc(caractere, arquivo_aux);
+            }
+        }
+    }
+    
+    rewind(arquivo_aux);
+    rewind(arquivo);
+    
+    while((caractere = fgetc(arquivo_aux)) != EOF ){
+        fputc(caractere, arquivo);
+    }
+    
+    int status = remove("/Users/leo/Desktop/Faculdade/ED2 - 2019/EDII-T1/Trabalho1/saida_aux.bin");
+    
+    if (status == 0)
+        printf("Nao foi possivel deletar o arquivo auxilia de compressao.");
+    else
+    {
+        printf("Nao foi possivel deletar o arquivo auxilia de compressao.\n");
+        perror("O seguinte erro ocorrou: \n");
+    }
+    
+    fclose(arquivo_aux);
+}
+
 //atualiza a lista de espaços disponíveis
 void atualizaLista(struct lista_espacos* lista, int quant_seek){
     
