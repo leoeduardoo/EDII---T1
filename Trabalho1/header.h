@@ -76,4 +76,7 @@ int contaCharBuffer(char * buffer);
 //atualiza a lista de espaços disponíveis
 void atualizaLista(struct lista_espacos* lista, int quant_seek);
 
+//compacta arquivo
+void compacta(FILE * arquivo);
+
 #endif /* header_h */
