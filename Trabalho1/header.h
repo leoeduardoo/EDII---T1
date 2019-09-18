@@ -79,4 +79,7 @@ void atualizaLista(struct lista_espacos* lista, int quant_seek);
 //compacta arquivo
 void compacta(FILE * arquivo);
 
+//verifica se já carregou os arquivos para a struct
+bool arquivoCarregado(struct remocao *remocao, struct cadastro *cadastro, int p);
+
 #endif /* header_h */

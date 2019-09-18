@@ -9,3 +9,4 @@ Tarefas para o próximo commit:
 - ~~Deletar registro.~~
 - Inserção considerando a lista de espaços disponíveis (não foi possível terminar, está inserindo sequencialmente).
 - ~~Compactar.~~
+- ~~Validação de arquivos de entrada carregados ou não.~~
