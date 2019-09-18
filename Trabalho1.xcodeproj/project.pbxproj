@@ -28,6 +28,7 @@
 		B31399EF231987EB00D4ED09 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		B31399F72320347700D4ED09 /* header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = header.h; sourceTree = "<group>"; };
 		B31399F82320354C00D4ED09 /* header.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = header.c; sourceTree = "<group>"; };
+		B3FF9B97233293410025D6BF /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +61,7 @@
 		B31399EE231987EB00D4ED09 /* Trabalho1 */ = {
 			isa = PBXGroup;
 			children = (
+				B3FF9B97233293410025D6BF /* README.md */,
 				B31399F82320354C00D4ED09 /* header.c */,
 				B31399F72320347700D4ED09 /* header.h */,
 				B31399EF231987EB00D4ED09 /* main.c */,

@@ -49,15 +49,20 @@ int main(void)
         printf("\n\t5. Carrega Arquivos");
         printf("\n\t6. Sair\n");
         printf("\nDigite uma opcao: ");
-        scanf("%d", &opcao);
+        fflush(stdin);
+        scanf(" %d", &opcao);
         
         switch (opcao) {
             case 1:
-                insereRegistro(cadastro, &lista);
+                if (arquivoCarregado(remocao, cadastro, 1)){
+                    insereRegistro(cadastro, &lista);
+                }
                 break;
                 
             case 2:
-                removeRegistro(remocao, cadastro, &lista);
+                if (arquivoCarregado(remocao, cadastro, 2)){
+                    removeRegistro(remocao, cadastro, &lista);
+                }
                 break;
                 
             case 3:

@@ -8,6 +8,28 @@
 
 #include "header.h"
 
+//verifica se já carregou os arquivos para a struct
+bool arquivoCarregado(struct remocao *remocao, struct cadastro *cadastro, int p){
+    //cadastro -> p = 1
+    //remocao -> p = 2
+    
+    if (p == 1){
+        if (strlen(cadastro[0].cod_segurado) == NULL){
+            printf("Carregue os arquivos de entrada primeiro (opcao 5).\n");
+            return false;
+        }else{
+            return true;
+        }
+    }else{
+        if (strlen(remocao[0].cod_segurado) == NULL){
+            printf("Carregue os arquivos de entrada primeiro (opcao 5).\n");
+            return false;
+        }else{
+            return true;
+        }
+    }
+}
+
 //compacta arquivo
 void compacta(FILE * arquivo){
     
@@ -133,8 +155,14 @@ void removeRegistro(struct remocao *remocao, struct cadastro *cadastro, struct l
     //armazena o cod_segurado lido de saida.bin
     char buffer_saida[3];
     
+    //armazena o cod_segurado anterior para comparar se houve um dado novo no buffer_saida
+    char buffer_saida_anterior[4];
+    
     //limpa o buffer preenchendo tudo '\0'
     memset(buffer_saida,(char)'\0',sizeof(buffer_saida));
+    
+    //limpa o buffer preenchendo tudo '\0'
+    memset(buffer_saida_anterior,(char)'\0',sizeof(buffer_saida_anterior));
     
     //contador para a posição da struct cadastro
     int i = 0;
@@ -171,16 +199,32 @@ void removeRegistro(struct remocao *remocao, struct cadastro *cadastro, struct l
         
         fseek(saida, quant_seek, 1);
         
+        //verifica se o que tem que ser removido (remocao[i].cod_segurado) é igual ao que foi lido do arquivo saida.bin (buffer_saida) e caso não efetua uma nova leitura do arquivo saida.bin
+        for(int cont = 0; cont < sizeof(buffer_saida); cont++){
+            buffer_saida_anterior[cont] = buffer_saida[cont];
+        }
         if (buffer_saida[0] != remocao[i].cod_segurado[0]){
             fread(buffer_saida, sizeof(buffer_saida), 1, saida);
+            //se buffer anterior for igual a buffer então não tem mais o que ler de saida.bin
+            if (strcmp(buffer_saida_anterior, buffer_saida) == 0){
+                break;
+            }
         }
         else{
             if (buffer_saida[1] != remocao[i].cod_segurado[1]){
                 fread(buffer_saida, sizeof(buffer_saida), 1, saida);
+                //se buffer anterior for igual a buffer então não tem mais o que ler de saida.bin
+                if (strcmp(buffer_saida_anterior, buffer_saida) == 0){
+                    break;
+                }
             }
             else{
                 if (buffer_saida[2] != remocao[i].cod_segurado[2]){
                     fread(buffer_saida, sizeof(buffer_saida), 1, saida);
+                    //se buffer anterior for igual a buffer então não tem mais o que ler de saida.bin
+                    if (strcmp(buffer_saida_anterior, buffer_saida) == 0){
+                        break;
+                    }
                 }
                 else{
                     flag_achou= true;
@@ -191,35 +235,37 @@ void removeRegistro(struct remocao *remocao, struct cadastro *cadastro, struct l
         k++;
     }
     
-    //remove a quantidade de seek a mais que foi lida
-    quant_seek -= strlen(cadastro[k-1].cod_segurado);
-    quant_seek -= strlen(cadastro[k-1].nome_segurado);
-    quant_seek -= strlen(cadastro[k-1].seguradora);
-    quant_seek -= strlen(cadastro[k-1].tipo_seguro);
-    quant_seek -= 5;
-    
-    rewind(saida);
-    
-    //pula o cabeçalho e o tamanho do primeiro registro
-    fseek(saida, 6 + quant_seek, 1);
-    
-    //atualiza a lista de espaços disponíveis
-    atualizaLista(lista, quant_seek);
-    
-    fputc(caractere_removido, saida);
-    fputc(caractere_removido, saida);
-    fprintf(saida, "%d", lista->prox->offset);
-    
-    //escreve em remocao.bin o cod_segurado para evitar que haja duplicidade posteriormente
-    fwrite(remocao[i].cod_segurado, sizeof(remocao[i].cod_segurado), 1, removido);
-    
-    rewind(saida);
-    
-    //4 para pular os 3 digitos do offset + '\n'
-    int teste = 4 + quant_seek;
-    
-    fprintf(saida, "%03d", teste);
-    
+    if(flag_achou){
+        
+        //remove a quantidade de seek a mais que foi lida
+        quant_seek -= strlen(cadastro[k-1].cod_segurado);
+        quant_seek -= strlen(cadastro[k-1].nome_segurado);
+        quant_seek -= strlen(cadastro[k-1].seguradora);
+        quant_seek -= strlen(cadastro[k-1].tipo_seguro);
+        quant_seek -= 5;
+        
+        rewind(saida);
+        
+        //pula o cabeçalho e o tamanho do primeiro registro
+        fseek(saida, 6 + quant_seek, 1);
+        
+        //atualiza a lista de espaços disponíveis
+        atualizaLista(lista, quant_seek);
+        
+        fputc(caractere_removido, saida);
+        fputc(caractere_removido, saida);
+        fprintf(saida, "%d", lista->prox->offset);
+        
+        //escreve em remocao.bin o cod_segurado para evitar que haja duplicidade posteriormente
+        fwrite(remocao[i].cod_segurado, sizeof(remocao[i].cod_segurado), 1, removido);
+        
+        rewind(saida);
+        
+        //4 para pular os 3 digitos do offset + '\n'
+        int teste = 4 + quant_seek;
+        
+        fprintf(saida, "%03d", teste);
+    }
     fclose(saida);
     fclose(removido);
 }
