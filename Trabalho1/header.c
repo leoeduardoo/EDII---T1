@@ -162,11 +162,18 @@ void compacta(){
     
     int i = 0;
     
-    //escreve o cabeçalho
-    for (i = 0; i < 4; i++){
-        caractere = fgetc(saida);
-        fputc(caractere, arquivo_aux);
-    }
+    //cabeçalho inicial
+    char cabecalho[] = "0-1";
+    
+    //verifica se o arquivo está vazio para inserir o cabeçalho
+    
+    fputc(cabecalho[0], arquivo_aux);
+    fputc(cabecalho[1], arquivo_aux);
+    fputc(cabecalho[2], arquivo_aux);
+    fputc('\n', arquivo_aux);
+    
+    //pula o cabeçalho e o tamanho do primeiro registro
+    fseek(saida, 4, 1);
     
     //armazena o tamanho do registro
     int tam = 0;
