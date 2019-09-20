@@ -74,12 +74,21 @@ void removeRegistro(struct remocao *remocao, struct cadastro *cadastro, struct l
 int contaCharBuffer(char * buffer);
 
 //atualiza a lista de espaços disponíveis
-void atualizaLista(struct lista_espacos* lista, int quant_seek);
+void atualizaListaDisponiveis(struct lista_espacos* lista, int quant_seek);
 
 //compacta arquivo
 void compacta(FILE * arquivo);
 
 //verifica se já carregou os arquivos para a struct
 bool arquivoCarregado(struct remocao *remocao, struct cadastro *cadastro, int p);
+
+//preenche a lista de espaços disponíveis
+void preencheListaDisponiveis(struct lista_espacos* lista);
+
+//retorna o offset a ser inserido no arquivo saida.bin quando se remove um arquivo
+int offsetListaDisponiveis(struct lista_espacos *lista);
+
+//inclui o novo nó na lista de disponíveis
+int incluiNoListaDisponiveis(struct lista_espacos *lista, int quant_seek);
 
 #endif /* header_h */
