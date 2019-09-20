@@ -3,11 +3,16 @@
    version = "1.0">
    <ContextStates>
       <ContextState
-         contextName = "insere:header.c">
+         contextName = "leEntrada:main.c">
          <PersistentStrings>
             <PersistentString
-               value = "buffer[l]">
+               value = "cadastro[1]">
             </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "insere:header.c">
+         <PersistentStrings>
             <PersistentString
                value = "sizeof(cadastro[i].cod_segurado)">
             </PersistentString>
@@ -15,9 +20,56 @@
                value = "buffer[l-1]">
             </PersistentString>
             <PersistentString
+               value = "buffer[l]">
+            </PersistentString>
+            <PersistentString
                value = "buffer[l+1]">
             </PersistentString>
          </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "remov:header.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "remocao[i]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "addNodeBottom:header.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "current-&gt;prox">
+            </PersistentString>
+            <PersistentString
+               value = "current-&gt;prox-&gt;offset">
+            </PersistentString>
+            <PersistentString
+               value = "current-&gt;offset">
+            </PersistentString>
+            <PersistentString
+               value = "current-&gt;prox-&gt;prox">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "insere:main.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "&amp;cadastro[i].tamanho">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "leRemove:header.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "*remocao">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "preencheDispo:header.c">
       </ContextState>
       <ContextState
          contextName = "main:main.c">
@@ -37,45 +89,19 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "leEntrada:main.c">
+         contextName = "offsetUltimo:header.c">
          <PersistentStrings>
             <PersistentString
-               value = "cadastro[1]">
+               value = "current-&gt;prox">
             </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "abreArquivo:header.c">
-      </ContextState>
-      <ContextState
-         contextName = "removeRegistro:header.c">
-         <PersistentStrings>
             <PersistentString
-               value = "remocao[i]">
+               value = "current-&gt;prox-&gt;offset">
             </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "insere:main.c">
-         <PersistentStrings>
             <PersistentString
-               value = "&amp;cadastro[i].tamanho">
+               value = "current-&gt;offset">
             </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "carregaArquivos:header.c">
-         <PersistentStrings>
             <PersistentString
-               value = "strlen(buffer_insere)">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "remov:header.c">
-         <PersistentStrings>
-            <PersistentString
-               value = "remocao[i]">
+               value = "current-&gt;prox-&gt;prox">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -91,10 +117,21 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "leRemove:header.c">
+         contextName = "abreArquivo:header.c">
+      </ContextState>
+      <ContextState
+         contextName = "removeRegistro:header.c">
          <PersistentStrings>
             <PersistentString
-               value = "*remocao">
+               value = "remocao[i]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "carregaArquivos:header.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "strlen(buffer_insere)">
             </PersistentString>
          </PersistentStrings>
       </ContextState>

@@ -12,9 +12,13 @@ int main(void)
 {
     //declara a lista de espacos
     struct lista_espacos lista;
-   
-    lista.offset = -1;
     lista.prox = NULL;
+    
+    preencheListaDisponiveis(&lista);
+    
+    if(lista.offset == 0){
+        lista.offset = -1;
+    }
     
     FILE *entrada;
     FILE *saida;
@@ -88,6 +92,8 @@ int main(void)
     
     fclose(entrada);
     fclose(saida);
+    fclose(remove);
     
+    exit(0);
     return 0;
 }

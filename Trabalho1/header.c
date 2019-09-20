@@ -8,20 +8,135 @@
 
 #include "header.h"
 
+//retorna o offset a ser inserido no arquivo saida.bin quando se remove um arquivo
+int offsetListaDisponiveis(struct lista_espacos *lista){
+    
+    FILE *saida;
+    
+    abreArquivo(&saida, "r+", "saida.bin");
+    
+    struct lista_espacos *novo_no = (struct lista_espacos*)malloc(sizeof(struct lista_espacos));
+    
+    if(novo_no == NULL){
+        fprintf(stderr, "Nao foi possivel criar o no auxiliar.\n");
+        exit(-1);
+    }
+    
+    //verifica se a lista está vazia
+    if(lista->prox == NULL){
+        printf("Lista vazia.\n");
+    }else{
+        //percorre a lista até prox->prox ser nulo
+        struct lista_espacos *atual = lista;
+        while(true){
+            if(atual->prox->prox == NULL)
+            {
+                //retorna o offset para ser escrito
+                return atual->offset;
+            }
+            atual = atual->prox;
+        };
+    }
+    
+    return 0;
+}
+
+int incluiNoListaDisponiveis(struct lista_espacos *lista, int quant_seek){
+    
+    struct lista_espacos *novo_no = (struct lista_espacos*)malloc(sizeof(struct lista_espacos));
+    
+    if(novo_no == NULL){
+        fprintf(stderr, "Nao foi possivel criar o no auxiliar.\n");
+        exit(-1);
+    }
+    
+    novo_no->offset = quant_seek;
+    novo_no->prox = NULL;
+    
+    //verifica se a lista está vazia
+    if(lista->prox == NULL){
+        lista->prox = novo_no;
+    }else{
+        //insere no fim
+        struct lista_espacos *atual = lista;
+        while (true) {
+            if(atual->prox == NULL)
+            {
+                atual->prox = novo_no;
+                break;
+            }
+            atual = atual->prox;
+        };
+    }
+    return 0;
+}
+
+//preenche a lista de espaços disponíveis
+void preencheListaDisponiveis(struct lista_espacos* lista){
+    
+    FILE *saida;
+    abreArquivo(&saida, "r+", "saida.bin");
+    
+    rewind(saida);
+    
+    //armazena os offsets dos espacos disponveis
+    char buffer[4];
+    
+    //limpa a struct preenchendo tudo '\0'
+    memset(buffer,(char)'\0',sizeof(buffer));
+    
+    //quantidade de seek entre o inicio do arquivo e o proximo espaco disponivel
+    int quant_seek = 0;
+    
+    char caractere = fgetc(saida);
+    
+    if(!(caractere == EOF)){
+        
+        //le de saida.bin e escreve em buffer
+        while(buffer[0] != '-' && buffer[1] != '-' && buffer[2] != '-' && buffer[3] != '-'){
+            
+            //limpa a struct preenchendo tudo '\0'
+            memset(buffer,(char)'\0',sizeof(buffer));
+            
+            //se o caractere lido for digito ou '-' insere no buffer
+            for (int i = 0; i < 4; i++){
+                if (isdigit(caractere) || caractere == '-'){
+                    buffer[i] = caractere;
+                }
+                else{
+                    buffer[i] = '\0';
+                }
+                caractere = fgetc(saida);
+            }
+            
+            rewind(saida);
+            
+            sscanf(buffer, "%d", &quant_seek);
+            
+            //+4 por conta dos dois dígitos do tamanho e 2 *
+            fseek(saida, quant_seek+4, 1);
+            caractere = fgetc(saida);
+            
+            atualizaListaDisponiveis(lista, quant_seek);
+        }
+    }
+    //atualizaListaDisponiveis(lista, quant_seek);
+}
+
 //verifica se já carregou os arquivos para a struct
 bool arquivoCarregado(struct remocao *remocao, struct cadastro *cadastro, int p){
     //cadastro -> p = 1
     //remocao -> p = 2
     
     if (p == 1){
-        if (strlen(cadastro[0].cod_segurado) == NULL){
+        if ((void*) strlen(cadastro[0].cod_segurado) == NULL){
             printf("Carregue os arquivos de entrada primeiro (opcao 5).\n");
             return false;
         }else{
             return true;
         }
     }else{
-        if (strlen(remocao[0].cod_segurado) == NULL){
+        if ((void*) strlen(remocao[0].cod_segurado) == NULL){
             printf("Carregue os arquivos de entrada primeiro (opcao 5).\n");
             return false;
         }else{
@@ -31,13 +146,15 @@ bool arquivoCarregado(struct remocao *remocao, struct cadastro *cadastro, int p)
 }
 
 //compacta arquivo
-void compacta(FILE * arquivo){
+void compacta(){
     
+    FILE *saida;
     FILE *arquivo_aux;
     
+    abreArquivo(&saida, "r+", "saida.bin");
     abreArquivo(&arquivo_aux, "w+", "saida_aux.bin");
     
-    rewind(arquivo);
+    rewind(saida);
     rewind(arquivo_aux);
     
     //armazena o caractere lido no arquivo
@@ -47,29 +164,31 @@ void compacta(FILE * arquivo){
     
     //escreve o cabeçalho
     for (i = 0; i < 4; i++){
-        caractere = fgetc(arquivo);
+        caractere = fgetc(saida);
         fputc(caractere, arquivo_aux);
     }
     
     //armazena o tamanho do registro
     int tam = 0;
     
-    
     while (caractere != EOF){
         
-        fscanf(arquivo, "%2d", &tam);
-        caractere = fgetc(arquivo);
+        fscanf(saida, "%2d", &tam);
+        caractere = fgetc(saida);
+        
         if(caractere != EOF){
+            //se caractere for * significa que o registor foi excluido e deve pular tam - 3 (dois digitos do tamanho e 1 do * lido)
             if(caractere == '*'){
-                fseek(arquivo, tam-3, 1);
+                fseek(saida, tam-3, 1);
             }
             else{
                 fprintf(arquivo_aux, "%d", tam);
                 
                 i = 0;
+                //ja leu 3 caracteres (dois digitos do tamanho e 1 do * lido) basta escrever o restante
                 while(i < tam-3){
                     fputc(caractere, arquivo_aux);
-                    caractere = fgetc(arquivo);
+                    caractere = fgetc(saida);
                     i++;
                 }
                 fputc(caractere, arquivo_aux);
@@ -78,36 +197,50 @@ void compacta(FILE * arquivo){
     }
     
     rewind(arquivo_aux);
-    rewind(arquivo);
     
+    //limpa o arquivo saida.bin
+    fclose(fopen("/Users/leo/Desktop/Faculdade/ED2 - 2019/EDII-T1/Trabalho1/saida.bin", "w"));
+    rewind(saida);
+    
+    //copia todos os caracteres de arquivo_aux para saida.bin
     while((caractere = fgetc(arquivo_aux)) != EOF ){
-        fputc(caractere, arquivo);
+        fputc(caractere, saida);
     }
     
     int status = remove("/Users/leo/Desktop/Faculdade/ED2 - 2019/EDII-T1/Trabalho1/saida_aux.bin");
     
-    if (status == 0)
-        printf("Nao foi possivel deletar o arquivo auxilia de compressao.");
-    else
-    {
-        printf("Nao foi possivel deletar o arquivo auxilia de compressao.\n");
+    if (status != 0){
+        printf("Nao foi possivel deletar o arquivo auxiliar de compressao.\n");
         perror("O seguinte erro ocorrou: \n");
     }
     
+    fclose(saida);
     fclose(arquivo_aux);
 }
 
 //atualiza a lista de espaços disponíveis
-void atualizaLista(struct lista_espacos* lista, int quant_seek){
+void atualizaListaDisponiveis(struct lista_espacos* lista, int quant_seek){
     
-    struct lista_espacos lista_aux = *lista;
-    
-    lista->prox = malloc(sizeof(struct lista_espacos));
-    
-    lista->prox->prox = lista_aux.prox;
-    lista->prox->offset = lista_aux.offset;
-    
-    lista->offset = 4 + quant_seek;
+    //se lista estiver vazia
+    if(lista->offset == 0){
+        //se quant_seek == 0 então o arquivo saida.bin está vazio e deve ser iniciada a lista com -1
+        if (quant_seek == 0){
+            lista->offset = -1;
+        }else{
+            //se quant_seek != 0 então a lista está vazia porque o programa inicializou e está sendo preenchida
+            lista->offset = quant_seek;
+        }
+    }else{
+        //cria novo nó para inserir na lista
+        struct lista_espacos lista_aux = *lista;
+        
+        lista->prox = malloc(sizeof(struct lista_espacos));
+        
+        lista->prox->prox = lista_aux.prox;
+        lista->prox->offset = lista_aux.offset;
+        
+        lista->offset = quant_seek;
+    }
 }
 
 //conta somente os caracteres no buffer
@@ -124,7 +257,6 @@ int contaCharBuffer(char * buffer){
     }
     return total_caracteres;
 }
-
 
 //remove registros no arquivo de saida
 void removeRegistro(struct remocao *remocao, struct cadastro *cadastro, struct lista_espacos* lista){
@@ -250,11 +382,13 @@ void removeRegistro(struct remocao *remocao, struct cadastro *cadastro, struct l
         fseek(saida, 6 + quant_seek, 1);
         
         //atualiza a lista de espaços disponíveis
-        atualizaLista(lista, quant_seek);
+        incluiNoListaDisponiveis(lista, quant_seek+4);
         
         fputc(caractere_removido, saida);
         fputc(caractere_removido, saida);
-        fprintf(saida, "%d", lista->prox->offset);
+        
+        //insere em saida.bin o offset do proximo espaço disponível
+        fprintf(saida, "%d", offsetListaDisponiveis(lista));
         
         //escreve em remocao.bin o cod_segurado para evitar que haja duplicidade posteriormente
         fwrite(remocao[i].cod_segurado, sizeof(remocao[i].cod_segurado), 1, removido);
@@ -262,9 +396,9 @@ void removeRegistro(struct remocao *remocao, struct cadastro *cadastro, struct l
         rewind(saida);
         
         //4 para pular os 3 digitos do offset + '\n'
-        int teste = 4 + quant_seek;
+        int cabecalho = 4 + quant_seek;
         
-        fprintf(saida, "%03d", teste);
+        fprintf(saida, "%03d", cabecalho);
     }
     fclose(saida);
     fclose(removido);
