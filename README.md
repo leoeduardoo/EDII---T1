@@ -8,5 +8,5 @@ Tarefas para o próximo commit:
 - ~~Fila de espaços disponíveis.~~
 - ~~Deletar registro.~~
 - Inserção considerando a lista de espaços disponíveis (está inserindo sequencialmente).
-- Compactar (falta mudar o header do arquivo para 0-1).
+- ~~Compactar.~~
 - ~~Validação de arquivos de entrada carregados ou não.~~
